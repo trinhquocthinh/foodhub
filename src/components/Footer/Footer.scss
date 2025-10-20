@@ -1,0 +1,64 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+
+footer {
+  background: $space-cadet;
+  padding: 50px $px;
+}
+
+.footer-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 30px;
+}
+
+.social-link {
+  display: flex;
+  gap: 15px;
+
+  svg {
+    color: $cultured;
+    font-size: 15px;
+    transition: 0.25s ease;
+
+    &:hover {
+      color: $saffron;
+    }
+  }
+}
+
+.copyright {
+  font-size: 12px;
+  color: $rhythm;
+  text-align: center;
+  letter-spacing: 0.5px;
+}
+
+// Responsive styles
+@include mobile-up {
+  .footer-wrapper {
+    max-width: 550px;
+    margin-inline: auto;
+  }
+}
+
+@include tablet-up {
+  .footer-wrapper {
+    max-width: 720px;
+  }
+}
+
+@include laptop-up {
+  .footer-wrapper {
+    max-width: 950px;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+}
+
+@include desktop-up {
+  .footer-wrapper {
+    max-width: 1150px;
+  }
+}

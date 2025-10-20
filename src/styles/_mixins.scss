@@ -1,0 +1,105 @@
+// Breakpoints
+$mobile: 574px;
+$tablet: 767px;
+$laptop: 991px;
+$desktop: 1199px;
+$xl-desktop: 1399px;
+
+// Responsive mixins
+@mixin mobile-up {
+  @media (min-width: #{$mobile + 1px}) {
+    @content;
+  }
+}
+
+@mixin tablet-up {
+  @media (min-width: #{$tablet + 1px}) {
+    @content;
+  }
+}
+
+@mixin laptop-up {
+  @media (min-width: #{$laptop + 1px}) {
+    @content;
+  }
+}
+
+@mixin desktop-up {
+  @media (min-width: #{$desktop + 1px}) {
+    @content;
+  }
+}
+
+@mixin xl-desktop-up {
+  @media (min-width: #{$xl-desktop + 1px}) {
+    @content;
+  }
+}
+
+// Common mixins
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin absolute-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+@mixin img-cover {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+@mixin bg-image {
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+@mixin button-reset {
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  font: inherit;
+}
+
+@mixin section-padding {
+  padding-block: $section-spacing;
+}
+
+@mixin container {
+  padding-inline: 16px;
+}
+
+@mixin grid-list {
+  display: grid;
+  gap: 30px;
+}
+
+@mixin card-transition {
+  transition: $transition-3;
+
+  &:hover {
+    transform: translateY(-6px);
+  }
+}
+
+@mixin visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}

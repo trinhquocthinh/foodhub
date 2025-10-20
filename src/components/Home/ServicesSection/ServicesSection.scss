@@ -1,0 +1,74 @@
+@use '../../../styles/variables' as *;
+@use '../../../styles/mixins' as *;
+
+.services {
+  padding: $py $px;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 40px;
+}
+
+.service-card {
+  .card-number {
+    font-size: 42px;
+    font-family: var(--font-display), 'Monoton', cursive;
+    color: $saffron;
+  }
+
+  .card-heading {
+    color: $space-cadet;
+    font-size: $fs-3;
+    font-weight: 600;
+    letter-spacing: -1px;
+    margin-bottom: 20px;
+  }
+
+  .card-text {
+    color: $rhythm;
+    font-size: $fs-4;
+    line-height: 1.5;
+  }
+}
+
+// Responsive styles
+@media (min-width: 570px) {
+  .services {
+    max-width: 550px;
+    margin-inline: auto;
+  }
+}
+
+@media (min-width: 768px) {
+  .services {
+    max-width: 720px;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px 30px;
+  }
+
+  .service-card {
+    display: grid;
+
+    .card-number {
+      grid-row: 1 / 3;
+      line-height: 1;
+      margin-right: 30px;
+    }
+
+    .card-heading {
+      grid-column: 2 / 3;
+    }
+  }
+}
+
+@media (min-width: 1024px) {
+  .services {
+    max-width: 950px;
+  }
+}
+
+@media (min-width: 1200px) {
+  .services {
+    max-width: 1150px;
+    grid-template-columns: repeat(3, 1fr);
+  }
+}

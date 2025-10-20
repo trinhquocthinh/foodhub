@@ -1,0 +1,147 @@
+// Import SCSS modules
+@use 'variables' as *;
+@use 'mixins' as *;
+
+/* -----------------------------------*\
+  #RESET
+\*------------------------------------*/
+
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  outline-offset: 5px;
+}
+
+li {
+  list-style: none;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+a,
+img,
+span,
+input,
+button,
+svg,
+textarea {
+  display: block;
+}
+
+img {
+  height: auto;
+}
+
+input,
+button,
+textarea {
+  background: none;
+  border: none;
+  font: inherit;
+}
+
+input,
+textarea {
+  width: 100%;
+}
+
+button {
+  cursor: pointer;
+}
+
+address {
+  font-style: normal;
+}
+
+html {
+  font-family: var(--font-rubik), 'Rubik', sans-serif;
+  scroll-behavior: smooth;
+}
+
+body {
+  min-height: 100vh;
+  background: $cultured;
+  color: $space-cadet;
+  font-family: var(--font-rubik), 'Rubik', sans-serif;
+}
+
+::-webkit-scrollbar {
+  width: 5px;
+}
+
+::-webkit-scrollbar-track {
+  background: $cultured;
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 5px;
+  background: $saffron;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: $space-cadet;
+}
+
+:focus-visible {
+  outline: 2px solid $saffron;
+  outline-offset: 5px;
+}
+
+/* -----------------------------------*\
+  #REUSABLE CLASSES
+\*------------------------------------*/
+
+.btn {
+  height: 55px;
+  padding: 0 25px;
+  color: $space-cadet;
+  font-size: $fs-5;
+  font-weight: 500;
+  transition: $default-transition;
+
+  &:hover {
+    filter: saturate(1.05) brightness(1.05);
+  }
+}
+
+.btn-primary {
+  background: $saffron;
+}
+
+.btn-secondary {
+  background: $cultured;
+}
+
+.btn-icon {
+  @include flex-center;
+  gap: 10px;
+}
+
+.section-title {
+  max-width: 420px;
+  color: $space-cadet;
+  font-size: $fs-2;
+  font-weight: 600;
+}
+
+.section-text {
+  max-width: 320px;
+  color: $rhythm;
+  font-size: $fs-4;
+  line-height: 1.4;
+  letter-spacing: 0.5px;
+}
+
+.container {
+  position: relative;
+  max-width: 1440px;
+  margin: auto;
+  background: $white;
+  overflow: hidden;
+}

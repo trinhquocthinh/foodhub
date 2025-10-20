@@ -1,0 +1,141 @@
+name: Auto Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*' # Match semantic version tags like v1.0.0
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Create Release
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: yarn
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Run build and tests
+        run: |
+          yarn type-check
+          yarn lint:strict
+          yarn build
+
+      - name: Get version from tag
+        id: version
+        run: |
+          echo "tag=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+          echo "version=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+
+      - name: Generate release notes
+        id: notes
+        run: |
+          TAG="${{ steps.version.outputs.tag }}"
+          VERSION="${{ steps.version.outputs.version }}"
+          echo "Generating release notes for $TAG (version: $VERSION)"
+          
+          # Create a Node.js script to extract changelog content more reliably
+          cat > extract_notes.cjs << 'EOF'
+          const fs = require('fs');
+          const tag = process.argv[2];
+          const version = process.argv[3];
+          
+          try {
+            const changelog = fs.readFileSync('CHANGELOG.md', 'utf8');
+            const lines = changelog.split('\n');
+            
+            // Look for version in different formats: [v1.0.0], [1.0.0], v1.0.0, 1.0.0
+            const versionPatterns = [
+              `## [${tag}]`,
+              `## [${version}]`, 
+              `## ${tag}`,
+              `## ${version}`
+            ];
+            
+            let versionIndex = -1;
+            for (const pattern of versionPatterns) {
+              versionIndex = lines.findIndex(line => line.trim().startsWith(pattern));
+              if (versionIndex !== -1) {
+                console.log(`Found version section: ${lines[versionIndex]}`);
+                break;
+              }
+            }
+            
+            if (versionIndex === -1) {
+              console.log('## What\'s Changed\n\nSee [CHANGELOG.md](./CHANGELOG.md) for details.');
+              process.exit(0);
+            }
+            
+            // Find the next version section
+            let nextVersionIndex = lines.findIndex((line, index) => 
+              index > versionIndex && line.match(/^## \[?[v]?\d+\.\d+\.\d+/)
+            );
+            
+            if (nextVersionIndex === -1) {
+              nextVersionIndex = lines.length;
+            }
+            
+            // Extract content between versions
+            const sectionLines = lines.slice(versionIndex + 1, nextVersionIndex);
+            
+            // Filter and format the content
+            const releaseNotes = [];
+            let currentSection = '';
+            
+            for (const line of sectionLines) {
+              const trimmed = line.trim();
+              
+              if (trimmed.startsWith('### ')) {
+                currentSection = trimmed.substring(4);
+                if (['Added', 'Changed', 'Fixed', 'Security'].includes(currentSection)) {
+                  releaseNotes.push(`\n## ${currentSection}\n`);
+                }
+              } else if (trimmed.startsWith('- ') && currentSection) {
+                releaseNotes.push(trimmed);
+              }
+            }
+            
+            const content = releaseNotes.join('\n').trim();
+            
+            if (content) {
+              console.log('## What\'s Changed\n');
+              console.log(content);
+            } else {
+              console.log('## What\'s Changed\n\nMinor updates and improvements.');
+            }
+            
+          } catch (error) {
+            console.log('## What\'s Changed\n\nError reading changelog: ' + error.message);
+          }
+          EOF
+          
+          # Extract release notes using Node.js script
+          node extract_notes.cjs "$TAG" "$VERSION" > release_notes.md
+          
+          echo "Generated release notes:"
+          cat release_notes.md
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ steps.version.outputs.tag }}
+          name: Release ${{ steps.version.outputs.tag }}
+          body_path: release_notes.md
+          draft: false
+          prerelease: false
+          generate_release_notes: true # This will also add auto-generated notes from commits
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

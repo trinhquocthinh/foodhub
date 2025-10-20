@@ -1,0 +1,177 @@
+@use '../../../styles/variables' as *;
+@use '../../../styles/mixins' as *;
+
+.about {
+  padding: $py $px;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 60px;
+}
+
+.about-left {
+  position: relative;
+
+  .img-box {
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+  }
+}
+
+.about-img {
+  @include img-cover;
+  animation: lazy-scaleUp 30s linear infinite;
+}
+
+@keyframes lazy-scaleUp {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.2);
+  }
+}
+
+.abs-content-box {
+  background: $white;
+  position: absolute;
+  bottom: -20px;
+  right: -20px;
+  padding: 30px;
+  text-align: center;
+  box-shadow: 2px 2px 10px hsla(0, 0%, 0%, 0.1);
+}
+
+.dotted-border {
+  border: 3px dotted $cultured;
+  padding: 10px;
+}
+
+.number-lg {
+  font-size: $fs-1;
+  font-family: var(--font-display), 'Monoton', cursive;
+  color: $space-cadet;
+}
+
+.text-md {
+  font-size: $fs-3;
+  font-weight: 600;
+  color: $space-cadet;
+}
+
+.shape {
+  position: absolute;
+  filter: drop-shadow(0px 3px 6px hsla(0, 0%, 0%, 0.1));
+}
+
+.shape-6 {
+  right: -9px;
+  top: 35%;
+  animation: scaleUp 2s 3s ease-in-out infinite;
+}
+
+.shape-7 {
+  top: 50%;
+  left: -15px;
+  animation: scaleUp 3s ease-in-out infinite;
+}
+
+.shape-8 {
+  top: -10px;
+  left: 15%;
+  animation: moveUp 3s 1s ease-in-out infinite;
+}
+
+.shape-9 {
+  bottom: -20px;
+  left: 5%;
+  animation: moveUp 3s ease-in-out infinite;
+}
+
+@keyframes scaleUp {
+  0%,
+  100% {
+    transform: translateY(0) scale(1);
+  }
+
+  50% {
+    transform: translateY(-5px) scale(1.05);
+  }
+}
+
+@keyframes moveUp {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  20% {
+    transform: translateY(-3px);
+  }
+
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+.about-right {
+  .section-title {
+    margin-bottom: 30px;
+  }
+
+  p {
+    max-width: 100%;
+    margin-bottom: 30px;
+  }
+}
+
+// Responsive styles
+@media (min-width: 570px) {
+  .about {
+    max-width: 550px;
+    margin-inline: auto;
+  }
+}
+
+@media (min-width: 768px) {
+  .about {
+    max-width: 720px;
+  }
+
+  .about-left .img-box {
+    aspect-ratio: 5 / 3;
+  }
+}
+
+@media (min-width: 1024px) {
+  .about {
+    max-width: 950px;
+    grid-template-columns: 3fr 4fr;
+    gap: 80px;
+    align-items: center;
+    padding: $py $px 120px;
+  }
+
+  .about-left .img-box {
+    aspect-ratio: auto;
+  }
+
+  .shape-7 {
+    top: 80%;
+    left: -25px;
+    width: 50px;
+  }
+
+  .shape-9 {
+    bottom: -40px;
+    left: 15%;
+    width: 100px;
+  }
+}
+
+@media (min-width: 1200px) {
+  .about {
+    max-width: 1150px;
+  }
+}
