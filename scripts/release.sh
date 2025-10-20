@@ -28,16 +28,16 @@ git pull origin main
 
 # Run tests and linting
 echo "🧪 Running type check..."
-npm run type-check
+yarn type-check
 
 echo "🔍 Running ESLint..."
-npm run lint:strict
+yarn lint:strict
 
 echo "💄 Checking code formatting..."
-npm run format:check
+yarn format:check
 
 echo "🏗️  Running build to ensure everything compiles..."
-npm run build
+yarn build
 
 # Get current version
 CURRENT_VERSION=$(node -p "require('./package.json').version")
@@ -45,31 +45,39 @@ echo "📋 Current version: $CURRENT_VERSION"
 
 # Create new version
 echo "📝 Creating new $RELEASE_TYPE version..."
-NEW_VERSION=$(npm version $RELEASE_TYPE --no-git-tag-version)
+NEW_VERSION=$(yarn version --$RELEASE_TYPE --no-git-tag-version 2>&1 | grep -oE 'v?[0-9]+\.[0-9]+\.[0-9]+' | tail -1)
+# Remove 'v' prefix if present
+NEW_VERSION=${NEW_VERSION#v}
 echo "🎉 New version: $NEW_VERSION"
 
 # Update changelog automatically
 if [ -f "CHANGELOG.md" ]; then
   echo "📝 Automatically updating CHANGELOG.md..."
-  npx tsx scripts/update-changelog.ts "$NEW_VERSION"
+  yarn tsx scripts/update-changelog.ts "$NEW_VERSION"
 fi
 
 # Commit version changes
 echo "💾 Committing version changes..."
-git add package.json package-lock.json 2>/dev/null || git add package.json yarn.lock 2>/dev/null || git add package.json
+git add package.json 2>/dev/null
+if [ -f "yarn.lock" ]; then
+  git add yarn.lock 2>/dev/null
+fi
+if [ -f "package-lock.json" ]; then
+  git add package-lock.json 2>/dev/null
+fi
 if [ -f "CHANGELOG.md" ]; then
   git add CHANGELOG.md
 fi
-git commit -m "chore: bump version to $NEW_VERSION"
+git commit -m "chore: bump version to v$NEW_VERSION"
 
 # Create and push tag
 echo "🏷️  Creating git tag..."
-git tag -a "$NEW_VERSION" -m "Release $NEW_VERSION"
+git tag -a "v$NEW_VERSION" -m "Release v$NEW_VERSION"
 
 # Push changes and tags
 echo "📤 Pushing changes and tags to remote..."
 git push origin main
 git push origin --tags
 
-echo "✅ Release $NEW_VERSION completed successfully!"
-echo "🔗 Create a GitHub release at: https://github.com/trinhquocthinh/Agency/releases/new?tag=$NEW_VERSION"
+echo "✅ Release v$NEW_VERSION completed successfully!"
+echo "🔗 Create a GitHub release at: https://github.com/trinhquocthinh/foodhub/releases/new?tag=v$NEW_VERSION"
