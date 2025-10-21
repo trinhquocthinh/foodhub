@@ -19,6 +19,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 
+## [1.0.3] - 2025-10-21
+
+### Fixed
+
+- Url image on page
+
 ## [1.0.2] - 2025-10-20
 
 ### Added
