@@ -1,0 +1,4 @@
+User-Agent: *
+Allow: /
+
+Sitemap: https://trinhquocthinh.github.io/foodhub/sitemap.xml
