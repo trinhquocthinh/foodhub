@@ -7,6 +7,7 @@ import {
   IoLogoYoutube,
 } from 'react-icons/io5';
 
+import { getImagePath } from '@/lib/getImagePath';
 import './Footer.scss';
 
 const socialLinks = [
@@ -22,7 +23,7 @@ const Footer = () => {
       <div className="footer-wrapper">
         <Link href="#home" aria-label="Foodhub">
           <Image
-            src="/images/logo-footer.svg"
+            src={getImagePath('/images/logo-footer.svg')}
             alt="Foodhub"
             className="footer-brand"
             width={130}

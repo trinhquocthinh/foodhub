@@ -1,6 +1,8 @@
 /** @type {import('next-sitemap').IConfig} */
 module.exports = {
-  siteUrl: process.env.NEXT_PUBLIC_SITE_URL || 'https://foodhub.com',
+  siteUrl:
+    process.env.NEXT_PUBLIC_SITE_URL ||
+    'https://trinhquocthinh.github.io/foodhub',
   generateRobotsTxt: true,
   generateIndexSitemap: false,
   exclude: ['/api/*', '/admin/*'],
@@ -13,7 +15,7 @@ module.exports = {
       },
     ],
     additionalSitemaps: [
-      `${process.env.NEXT_PUBLIC_SITE_URL || 'https://foodhub.com'}/sitemap.xml`,
+      `${process.env.NEXT_PUBLIC_SITE_URL || 'https://trinhquocthinh.github.io/foodhub'}/sitemap.xml`,
     ],
   },
   transform: async (config, path) => {

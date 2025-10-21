@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { memo, useCallback, useState } from 'react';
 
 import { cartItems, navLinks } from '@/constants/layout';
+import { getImagePath } from '@/lib/getImagePath';
 
 import './Header.scss';
 
@@ -44,7 +45,7 @@ const Header = () => {
         <div className="navbar-wrapper">
           <Link href="#home" onClick={closeNav} aria-label="Foodhub logo">
             <Image
-              src="/images/logo.svg"
+              src={getImagePath('/images/logo.svg')}
               alt="Foodhub"
               width={130}
               height={36}
@@ -79,7 +80,7 @@ const Header = () => {
               aria-controls="cart"
             >
               <Image
-                src="/images/cart.svg"
+                src={getImagePath('/images/cart.svg')}
                 alt="Shopping cart"
                 width={18}
                 height={18}
@@ -116,7 +117,7 @@ const Header = () => {
               <Link href="#menu" className="cart-item" onClick={toggleCart}>
                 <div className="img-box">
                   <Image
-                    src={item.image}
+                    src={getImagePath(item.image)}
                     alt={item.name}
                     className="product-img"
                     width={50}

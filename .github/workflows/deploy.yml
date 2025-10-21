@@ -51,7 +51,10 @@ jobs:
         run: |
           export GITHUB_ACTIONS=true
           export GITHUB_REPOSITORY=${{ github.repository }}
-          yarn build
+          export NODE_ENV=production
+          export NEXT_PUBLIC_SITE_URL=https://trinhquocthinh.github.io/foodhub
+          export NEXT_PUBLIC_BASE_PATH=/foodhub
+          yarn build:gh
 
       - name: Add .nojekyll file
         run: touch ./out/.nojekyll

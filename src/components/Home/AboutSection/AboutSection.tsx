@@ -1,5 +1,6 @@
 import Image from 'next/image';
 
+import { getImagePath } from '@/lib/getImagePath';
 import './AboutSection.scss';
 
 const AboutSection = () => {
@@ -8,7 +9,7 @@ const AboutSection = () => {
       <div className="about-left">
         <div className="img-box">
           <Image
-            src="/images/about-image.jpg"
+            src={getImagePath('/images/about-image.jpg')}
             alt="Foodhub interior"
             className="about-img"
             width={250}
@@ -24,28 +25,28 @@ const AboutSection = () => {
           </div>
         </div>
         <Image
-          src="/images/circle.svg"
+          src={getImagePath('/images/circle.svg')}
           alt="Decorative shape"
           className="shape shape-6"
           width={20}
           height={20}
         />
         <Image
-          src="/images/circle.svg"
+          src={getImagePath('/images/circle.svg')}
           alt="Decorative shape"
           className="shape shape-7"
           width={30}
           height={30}
         />
         <Image
-          src="/images/ring.svg"
+          src={getImagePath('/images/ring.svg')}
           alt="Decorative shape"
           className="shape shape-8"
           width={35}
           height={35}
         />
         <Image
-          src="/images/ring.svg"
+          src={getImagePath('/images/ring.svg')}
           alt="Decorative shape"
           className="shape shape-9"
           width={80}
@@ -67,7 +68,7 @@ const AboutSection = () => {
           directly to your table.
         </p>
         <Image
-          src="/images/signature.png"
+          src={getImagePath('/images/signature.png')}
           alt="Chef signature"
           className="signature"
           width={150}

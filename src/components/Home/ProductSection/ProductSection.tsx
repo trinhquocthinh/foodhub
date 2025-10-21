@@ -2,6 +2,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { IoFlame, IoLeaf, IoStar } from 'react-icons/io5';
 
+import { getImagePath } from '@/lib/getImagePath';
 import type { Product } from '@/types';
 
 import './ProductSection.scss';
@@ -28,7 +29,7 @@ const ProductSection = ({ products }: ProductSectionProps) => {
           >
             <div className="img-box">
               <Image
-                src={product.image}
+                src={getImagePath(product.image)}
                 alt={product.name}
                 className="product-img"
                 width={200}
@@ -74,7 +75,12 @@ const ProductSection = ({ products }: ProductSectionProps) => {
         className="btn btn-primary btn-icon"
         aria-label="View full menu"
       >
-        <Image src="/images/menu.svg" alt="Menu icon" width={18} height={18} />
+        <Image
+          src={getImagePath('/images/menu.svg')}
+          alt="Menu icon"
+          width={18}
+          height={18}
+        />
         Full menu
       </Link>
     </section>

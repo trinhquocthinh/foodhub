@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 
+import { getImagePath } from '@/lib/getImagePath';
 import './HomeSection.scss';
 
 const HomeSection = () => {
@@ -18,7 +19,7 @@ const HomeSection = () => {
         <div className="btn-group">
           <Link href="#menu" className="btn btn-primary btn-icon">
             <Image
-              src="/images/menu.svg"
+              src={getImagePath('/images/menu.svg')}
               alt="Our menu"
               width={18}
               height={18}
@@ -27,7 +28,7 @@ const HomeSection = () => {
           </Link>
           <Link href="#about" className="btn btn-secondary btn-icon">
             <Image
-              src="/images/arrow.svg"
+              src={getImagePath('/images/arrow.svg')}
               alt="About us"
               width={18}
               height={18}
@@ -39,7 +40,7 @@ const HomeSection = () => {
 
       <div className="home-right">
         <Image
-          src="/images/food1.png"
+          src={getImagePath('/images/food1.png')}
           alt="Colorful salad bowl"
           className="food-img food-1"
           width={200}
@@ -47,14 +48,14 @@ const HomeSection = () => {
           priority
         />
         <Image
-          src="/images/food2.png"
+          src={getImagePath('/images/food2.png')}
           alt="Gourmet dish"
           className="food-img food-2"
           width={200}
           height={200}
         />
         <Image
-          src="/images/food3.png"
+          src={getImagePath('/images/food3.png')}
           alt="Fresh dessert"
           className="food-img food-3"
           width={200}
@@ -62,14 +63,14 @@ const HomeSection = () => {
         />
 
         <Image
-          src="/images/dialog-1.svg"
+          src={getImagePath('/images/dialog-1.svg')}
           alt="Foodhub review"
           className="dialog dialog-1"
           width={230}
           height={120}
         />
         <Image
-          src="/images/dialog-2.svg"
+          src={getImagePath('/images/dialog-2.svg')}
           alt="Foodhub ratings"
           className="dialog dialog-2"
           width={230}
@@ -77,35 +78,35 @@ const HomeSection = () => {
         />
 
         <Image
-          src="/images/circle.svg"
+          src={getImagePath('/images/circle.svg')}
           alt="Decorative shape"
           className="shape shape-1"
           width={25}
           height={25}
         />
         <Image
-          src="/images/circle.svg"
+          src={getImagePath('/images/circle.svg')}
           alt="Decorative shape"
           className="shape shape-2"
           width={15}
           height={15}
         />
         <Image
-          src="/images/circle.svg"
+          src={getImagePath('/images/circle.svg')}
           alt="Decorative shape"
           className="shape shape-3"
           width={30}
           height={30}
         />
         <Image
-          src="/images/ring.svg"
+          src={getImagePath('/images/ring.svg')}
           alt="Decorative shape"
           className="shape shape-4"
           width={60}
           height={60}
         />
         <Image
-          src="/images/ring.svg"
+          src={getImagePath('/images/ring.svg')}
           alt="Decorative shape"
           className="shape shape-5"
           width={40}

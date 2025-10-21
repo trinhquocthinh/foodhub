@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import { IoStar } from 'react-icons/io5';
 
+import { getImagePath } from '@/lib/getImagePath';
 import type { Testimonial } from '@/types';
 
 import './TestimonialsSection.scss';
@@ -33,7 +34,7 @@ const TestimonialsSection = ({ testimonials }: TestimonialsSectionProps) => {
             <div className="customer-info">
               <div className="customer-img-box">
                 <Image
-                  src={testimonial.image}
+                  src={getImagePath(testimonial.image)}
                   alt={testimonial.name}
                   className="customer-img"
                   width={100}

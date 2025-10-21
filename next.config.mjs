@@ -4,12 +4,12 @@ const bundleAnalyzer = withBundleAnalyzer({
   enabled: process.env.ANALYZE === 'true',
 });
 
-const repoName = process.env.GITHUB_REPOSITORY?.split('/')[1];
-const isGH = process.env.GITHUB_ACTIONS === 'true';
+const repoName = process.env.GITHUB_REPOSITORY?.split('/')[1] || 'foodhub';
+const isDeploy = process.env.NODE_ENV === 'production';
 
-// prefer explicit client-visible var if bạn muốn dùng trong code
+// For GitHub Pages, always use the repo name as base path in production
 const publicBasePath =
-  process.env.NEXT_PUBLIC_BASE_PATH || (isGH && repoName ? `/${repoName}` : '');
+  process.env.NEXT_PUBLIC_BASE_PATH || (isDeploy ? `/${repoName}` : '');
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -30,8 +30,6 @@ const nextConfig = {
   // Image optimization
   images: {
     unoptimized: true, // Required for static export
-    loader: 'custom',
-    loaderFile: './src/lib/imageLoader.ts',
     formats: ['image/avif', 'image/webp'], // Modern image formats
     deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
@@ -115,7 +113,8 @@ const nextConfig = {
   // Environment variables that should be available on the client
   env: {
     NEXT_PUBLIC_SITE_URL:
-      process.env.NEXT_PUBLIC_SITE_URL || 'https://foodhub.com',
+      process.env.NEXT_PUBLIC_SITE_URL ||
+      'https://trinhquocthinh.github.io/foodhub',
     NEXT_PUBLIC_BASE_PATH: publicBasePath || '',
   },
 

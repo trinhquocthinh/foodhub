@@ -1,0 +1,11 @@
+# *
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /admin/
+
+# Host
+Host: https://trinhquocthinh.github.io/foodhub
+
+# Sitemaps
+Sitemap: https://trinhquocthinh.github.io/foodhub/sitemap.xml
