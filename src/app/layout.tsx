@@ -2,8 +2,11 @@ import { Monoton, Rubik } from 'next/font/google';
 import type { ReactNode } from 'react';
 
 import { Layout } from '@/components';
+import { metadata as seoMetadata } from '@/config/seo';
 
 import '../styles/globals.scss';
+
+export const metadata = seoMetadata;
 
 const rubik = Rubik({
   subsets: ['latin'],

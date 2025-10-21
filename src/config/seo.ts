@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://foodhub.com';
+const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
 
 export const siteConfig = {
   name: 'Anna Portfolio',
@@ -40,7 +41,7 @@ export const metadata: Metadata = {
     locale: 'en_US',
     images: [
       {
-        url: `${siteUrl}/images/food1.png`,
+        url: `${siteUrl}${basePath}/images/food1.png`,
         width: 1200,
         height: 630,
         alt: 'Foodhub signature dish',
@@ -52,12 +53,14 @@ export const metadata: Metadata = {
     title: 'Foodhub | Crafted Culinary Experiences',
     description:
       'Experience vibrant flavors and curated menus at Foodhub, your go-to destination for memorable meals.',
-    images: [`${siteUrl}/images/food2.png`],
+    images: [`${siteUrl}${basePath}/images/food2.png`],
   },
   alternates: {
     canonical: siteUrl,
   },
   icons: {
-    icon: '/favicon.svg',
+    icon: `${basePath}/favicon.svg`,
+    shortcut: `${basePath}/favicon.svg`,
+    apple: `${basePath}/favicon.svg`,
   },
 };

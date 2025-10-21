@@ -11,6 +11,7 @@ next-env.d.ts
 # Production build
 /dist/
 /build/
+/out/
 
 # Environment variables
 .env
@@ -109,3 +110,4 @@ Thumbs.db
 
 # Vercel
 .vercel
+

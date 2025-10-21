@@ -1,9 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-labelledby="title desc">
-  <title id="title">Foodhub Favicon</title>
-  <desc id="desc">Stylized letter F inside a saffron circle</desc>
-  <circle cx="32" cy="32" r="32" fill="#f7c532" />
-  <path
-    d="M24 18h20a2 2 0 0 1 0 4H28v8h11a2 2 0 0 1 0 4H28v10a2 2 0 0 1-4 0V20a2 2 0 0 1 0-.18V20a2 2 0 0 1 0-2"
-    fill="#261f41"
-  />
-</svg>
