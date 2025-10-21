@@ -19,6 +19,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 
+## [1.0.4] - 2025-10-21
+
+### Changed
+
+- Update card product and cart
+- update structure project
+
 ## [1.0.3] - 2025-10-21
 
 ### Fixed
