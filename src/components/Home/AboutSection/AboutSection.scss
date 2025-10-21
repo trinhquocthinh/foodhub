@@ -127,14 +127,14 @@
 }
 
 // Responsive styles
-@media (min-width: 570px) {
+@include mobile-up {
   .about {
     max-width: 550px;
     margin-inline: auto;
   }
 }
 
-@media (min-width: 768px) {
+@include laptop-up {
   .about {
     max-width: 720px;
   }
@@ -144,7 +144,7 @@
   }
 }
 
-@media (min-width: 1024px) {
+@include laptop-up {
   .about {
     max-width: 950px;
     grid-template-columns: 3fr 4fr;
@@ -170,7 +170,7 @@
   }
 }
 
-@media (min-width: 1200px) {
+@include desktop-up {
   .about {
     max-width: 1150px;
   }

@@ -174,14 +174,14 @@
   }
 }
 
-@media (min-width: 570px) {
+@include mobile-up {
   .home {
     max-width: 550px;
     margin-inline: auto;
   }
 }
 
-@media (min-width: 768px) {
+@include laptop-up {
   .home {
     max-width: 720px;
   }
@@ -201,7 +201,7 @@
   }
 }
 
-@media (min-width: 1024px) {
+@include laptop-up {
   .home {
     max-width: 950px;
     grid-template-columns: 1fr 1fr;
@@ -226,7 +226,7 @@
   }
 }
 
-@media (min-width: 1200px) {
+@include desktop-up {
   .home {
     max-width: 1150px;
   }

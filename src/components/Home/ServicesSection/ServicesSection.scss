@@ -31,14 +31,14 @@
 }
 
 // Responsive styles
-@media (min-width: 570px) {
+@include mobile-up {
   .services {
     max-width: 550px;
     margin-inline: auto;
   }
 }
 
-@media (min-width: 768px) {
+@include tablet-up {
   .services {
     max-width: 720px;
     grid-template-columns: 1fr 1fr;
@@ -60,13 +60,13 @@
   }
 }
 
-@media (min-width: 1024px) {
+@include laptop-up {
   .services {
     max-width: 950px;
   }
 }
 
-@media (min-width: 1200px) {
+@include desktop-up {
   .services {
     max-width: 1150px;
     grid-template-columns: repeat(3, 1fr);

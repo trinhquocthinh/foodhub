@@ -1,7 +1,9 @@
+'use client';
+
 import Image from 'next/image';
-import Link from 'next/link';
 import { IoFlame, IoLeaf, IoStar } from 'react-icons/io5';
 
+import { useCart } from '@/context/CartContext';
 import { getImagePath } from '@/lib/getImagePath';
 import type { Product } from '@/types';
 
@@ -12,6 +14,8 @@ export type ProductSectionProps = {
 };
 
 const ProductSection = ({ products }: ProductSectionProps) => {
+  const { addToCart } = useCart();
+
   return (
     <section className="product" id="menu">
       <h2 className="section-title">Most popular dishes</h2>
@@ -57,21 +61,34 @@ const ProductSection = ({ products }: ProductSectionProps) => {
                 </p>
               </div>
               <p className="product-text">{product.description}</p>
-              <div
-                className="product-rating"
-                aria-label={`Rated ${product.rating ?? 5} out of 5`}
-              >
-                {Array.from({ length: product.rating ?? 5 }).map((_, index) => (
-                  <IoStar key={index} aria-hidden="true" />
-                ))}
+              <div className="product-footer">
+                <div
+                  className="product-rating"
+                  aria-label={`Rated ${product.rating ?? 5} out of 5`}
+                >
+                  {Array.from({ length: product.rating ?? 5 }, (_, index) => (
+                    <IoStar
+                      key={`${product.id}-star-${index}`}
+                      aria-hidden="true"
+                    />
+                  ))}
+                </div>
+                <button
+                  type="button"
+                  className="btn btn-primary btn-icon add-to-cart-btn"
+                  onClick={() => addToCart(product)}
+                  aria-label={`Add ${product.name} to cart`}
+                >
+                  Add to cart
+                </button>
               </div>
             </div>
           </article>
         ))}
       </div>
 
-      <Link
-        href="/"
+      <button
+        type="button"
         className="btn btn-primary btn-icon"
         aria-label="View full menu"
       >
@@ -82,7 +99,7 @@ const ProductSection = ({ products }: ProductSectionProps) => {
           height={18}
         />
         Full menu
-      </Link>
+      </button>
     </section>
   );
 };

@@ -4,7 +4,8 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { memo, useCallback, useState } from 'react';
 
-import { cartItems, navLinks } from '@/constants/layout';
+import { navLinks } from '@/constants/layout';
+import { useCart } from '@/context/CartContext';
 import { getImagePath } from '@/lib/getImagePath';
 
 import './Header.scss';
@@ -12,6 +13,7 @@ import './Header.scss';
 const Header = () => {
   const [isNavOpen, setIsNavOpen] = useState<boolean>(false);
   const [isCartOpen, setIsCartOpen] = useState<boolean>(false);
+  const { items, cartCount, subtotal } = useCart();
 
   const toggleNav = useCallback(() => {
     setIsNavOpen(previous => {
@@ -37,7 +39,11 @@ const Header = () => {
     });
   }, [isNavOpen]);
 
-  const cartCount = cartItems.length;
+  const isCartEmpty = items.length === 0;
+  const itemLabel = cartCount === 1 ? 'item' : 'items';
+  const cartStatusLabel = isCartEmpty
+    ? 'Add a few favorites to get started.'
+    : `${cartCount} ${itemLabel} in your bag`;
 
   return (
     <header>
@@ -85,7 +91,10 @@ const Header = () => {
                 width={18}
                 height={18}
               />
-              <span className="count" aria-label={`${cartCount} items in cart`}>
+              <span
+                className="count"
+                aria-label={`${cartCount} ${itemLabel} in cart`}
+              >
                 {cartCount}
               </span>
             </button>
@@ -110,35 +119,73 @@ const Header = () => {
         className={`cart-box${isCartOpen ? ' active' : ''}`}
         aria-hidden={!isCartOpen}
       >
-        <ul className="cart-box-ul">
-          <h4 className="cart-h4">Your order.</h4>
-          {cartItems.map(item => (
-            <li key={item.id}>
-              <Link href="#menu" className="cart-item" onClick={toggleCart}>
-                <div className="img-box">
-                  <Image
-                    src={getImagePath(item.image)}
-                    alt={item.name}
-                    className="product-img"
-                    width={50}
-                    height={50}
-                  />
-                </div>
-                <h5 className="product-name">{item.name}</h5>
-                <p className="product-price">
-                  <span className="small">$</span>
-                  {item.price}
-                </p>
-              </Link>
-            </li>
-          ))}
-        </ul>
+        <div className="cart-panel">
+          <div className="cart-header">
+            <h4 className="cart-h4">Your order</h4>
+            <p className="cart-subtitle">{cartStatusLabel}</p>
+          </div>
+
+          <ul className="cart-box-ul">
+            {isCartEmpty ? (
+              <li className="empty-cart">
+                Explore the menu and tap “Add to cart” to build your order.
+              </li>
+            ) : (
+              items.map(item => (
+                <li key={item.id} className="cart-item">
+                  <div className="img-box">
+                    <Image
+                      src={getImagePath(item.image)}
+                      alt={item.name}
+                      className="product-img"
+                      width={50}
+                      height={50}
+                    />
+                  </div>
+
+                  <h5 className="product-name">
+                    <Link href="#menu" onClick={toggleCart}>
+                      {item.name}
+                    </Link>
+                  </h5>
+
+                  <span className="quantity-value" aria-live="polite">
+                    <small>x</small>
+                    {item.quantity}
+                  </span>
+
+                  <p className="product-price" aria-label="Item total">
+                    <span className="small">$</span>
+                    {item.price}
+                  </p>
+                </li>
+              ))
+            )}
+          </ul>
+        </div>
 
         <div className="cart-btn-group">
-          <button type="button" className="btn btn-secondary">
+          <div className="cart-summary" aria-live="polite">
+            <span className="label">Subtotal</span>
+            <span className="value">
+              <span className="small">$</span>
+              {subtotal.toFixed(2)}
+            </span>
+          </div>
+          <button
+            type="button"
+            className="btn btn-secondary"
+            disabled={isCartEmpty}
+            aria-disabled={isCartEmpty}
+          >
             View order
           </button>
-          <button type="button" className="btn btn-primary">
+          <button
+            type="button"
+            className="btn btn-primary"
+            disabled={isCartEmpty}
+            aria-disabled={isCartEmpty}
+          >
             Checkout
           </button>
         </div>
