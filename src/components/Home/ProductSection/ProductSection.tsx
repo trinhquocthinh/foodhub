@@ -1,6 +1,7 @@
 'use client';
 
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import { IoFlame, IoLeaf, IoStar } from 'react-icons/io5';
 
 import { useCart } from '@/context/CartContext';
@@ -12,8 +13,8 @@ import './ProductSection.scss';
 export type ProductSectionProps = {
   products: Product[];
 };
-
 const ProductSection = ({ products }: ProductSectionProps) => {
+  const router = useRouter();
   const { addToCart } = useCart();
 
   return (
@@ -88,9 +89,10 @@ const ProductSection = ({ products }: ProductSectionProps) => {
       </div>
 
       <button
-        type="button"
         className="btn btn-primary btn-icon"
-        aria-label="View full menu"
+        type="button"
+        onClick={() => router.push('/menu')}
+        aria-label="View full menu page"
       >
         <Image
           src={getImagePath('/images/menu.svg')}

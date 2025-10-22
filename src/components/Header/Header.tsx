@@ -49,7 +49,7 @@ const Header = () => {
     <header>
       <nav className="navbar" aria-label="Primary">
         <div className="navbar-wrapper">
-          <Link href="#home" onClick={closeNav} aria-label="Foodhub logo">
+          <Link href="/" onClick={closeNav} aria-label="Foodhub logo">
             <Image
               src={getImagePath('/images/logo.svg')}
               alt="Foodhub"

@@ -24,8 +24,19 @@ export type Product = {
   price: number;
   description: string;
   image: string;
-  tags?: Array<'vegan' | 'hot'>;
+  category?: string;
+  tags?: Array<
+    'vegan' | 'hot' | 'gluten-free' | 'new' | 'signature' | 'seasonal'
+  >;
   rating?: number;
+  calories?: number;
+  prepTime?: number;
+  highlight?: string;
+};
+
+export type MenuItem = Product & {
+  category: 'starters' | 'mains' | 'desserts' | 'sides' | 'drinks';
+  tags?: NonNullable<Product['tags']>;
 };
 
 export type Testimonial = {

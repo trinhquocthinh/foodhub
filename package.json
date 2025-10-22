@@ -33,6 +33,7 @@
     "@types/node": "^20.10.5",
     "@types/react": "^18.2.45",
     "@types/react-dom": "^18.2.18",
+    "isotope-layout": "^3.0.6",
     "next": "^14.0.4",
     "next-seo": "^6.8.0",
     "next-sitemap": "^4.2.3",
@@ -48,6 +49,7 @@
   },
   "devDependencies": {
     "@next/eslint-plugin-next": "^15.5.4",
+    "@types/isotope-layout": "^3.0.8",
     "@typescript-eslint/eslint-plugin": "^8.44.1",
     "@typescript-eslint/parser": "^8.44.1",
     "cross-env": "^10.0.0",
