@@ -7,3 +7,4 @@ export { default as TestimonialsSection } from './Home/TestimonialsSection';
 export { default as MenuPage } from './Menu/MenuPage';
 
 export { default as ProductCard } from './Menu/ProductCard/ProductCard';
+export { default as ProductRating } from './Menu/ProductRating/ProductRating';

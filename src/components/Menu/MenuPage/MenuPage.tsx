@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useMemo, useState } from 'react';
 import {
   IoChevronDown,
   IoChevronUp,
@@ -40,16 +40,6 @@ type MenuPageProps = {
   sortOptions: MenuSortOption[];
 };
 
-type IsotopeInstance = {
-  arrange: (options: {
-    filter?: ((element: Element) => boolean) | string;
-    sortBy?: string;
-    sortAscending?: boolean;
-  }) => void;
-  destroy: () => void;
-  updateSortData: () => void;
-};
-
 const MenuPage = ({
   items,
   categories,
@@ -67,10 +57,6 @@ const MenuPage = ({
     sortOptions[0]?.id ?? 'recommended'
   );
   const [sidebarOpen, setSidebarOpen] = useState<boolean>(false);
-  const [isIsotopeReady, setIsIsotopeReady] = useState<boolean>(false);
-
-  const gridRef = useRef<HTMLDivElement | null>(null);
-  const isotopeRef = useRef<IsotopeInstance | null>(null);
 
   const activeTagList = useMemo<MenuDietaryFilter['id'][]>(
     () => Array.from(activeTags),
@@ -80,111 +66,52 @@ const MenuPage = ({
   const menuSubtitle =
     "Filter, sort, and discover plates made to share or savor solo. Animations are powered by our kitchen's rhythm so everything stays lively.";
 
-  const isotopeFilter = useMemo(
-    () => createFilterFn(activeCategory, activeTagList),
-    [activeCategory, activeTagList]
-  );
-
   const sortConfig = useMemo(
     () => sortOptions.find(option => option.id === activeSort),
     [activeSort, sortOptions]
   );
 
-  useEffect(() => {
-    let isMounted = true;
+  // Filter and sort items
+  const displayedItems = useMemo(() => {
+    // First filter
+    let filtered = items.filter(item =>
+      matchesFilters({
+        item,
+        activeCategory,
+        activeTags: activeTagList,
+      })
+    );
 
-    const bootstrapIsotope = async () => {
-      if (!gridRef.current || typeof window === 'undefined') {
-        return;
-      }
+    // Then sort
+    if (sortConfig) {
+      filtered = [...filtered].sort((a, b) => {
+        let compareValue = 0;
 
-      const { default: Isotope } = await import('isotope-layout');
-      if (!isMounted || !gridRef.current) {
-        return;
-      }
+        switch (sortConfig.sortBy) {
+          case 'price':
+            compareValue = a.price - b.price;
+            break;
+          case 'rating':
+            compareValue = (a.rating ?? 0) - (b.rating ?? 0);
+            break;
+          case 'name':
+            compareValue = a.name.localeCompare(b.name);
+            break;
+          case 'original':
+          default:
+            // Keep original order (based on items array index)
+            compareValue = items.indexOf(a) - items.indexOf(b);
+            break;
+        }
 
-      const grid = gridRef.current;
-
-      const instance = new Isotope(grid, {
-        itemSelector: '.menu-card',
-        layoutMode: 'fitRows',
-        percentPosition: false,
-        transitionDuration: '0.45s',
-        getSortData: {
-          original: (element: Element) =>
-            parseInt(
-              (element as HTMLElement).getAttribute('data-original-order') ??
-                '0',
-              10
-            ),
-          price: (element: Element) =>
-            parseFloat(
-              (element as HTMLElement).getAttribute('data-price') ?? '0'
-            ),
-          rating: (element: Element) =>
-            parseFloat(
-              (element as HTMLElement).getAttribute('data-rating') ?? '0'
-            ),
-          name: (element: Element) =>
-            (element as HTMLElement).getAttribute('data-name') ?? '',
-        },
+        return sortConfig.sortAscending === false
+          ? -compareValue
+          : compareValue;
       });
-
-      isotopeRef.current = instance;
-      setIsIsotopeReady(true);
-    };
-
-    const timer = setTimeout(bootstrapIsotope, 100);
-
-    return () => {
-      isMounted = false;
-      clearTimeout(timer);
-      if (isotopeRef.current) {
-        isotopeRef.current.destroy();
-        isotopeRef.current = null;
-      }
-    };
-  }, []);
-
-  useEffect(() => {
-    const iso = isotopeRef.current;
-    if (!iso || !isIsotopeReady) {
-      return;
     }
 
-    try {
-      iso.updateSortData();
-      const arrangeOptions: {
-        filter?: ((element: Element) => boolean) | string;
-        sortBy?: string;
-        sortAscending?: boolean;
-      } = {
-        filter: isotopeFilter,
-      };
-
-      if (sortConfig?.sortBy) {
-        arrangeOptions.sortBy = sortConfig.sortBy;
-        arrangeOptions.sortAscending = sortConfig.sortAscending;
-      }
-
-      iso.arrange(arrangeOptions);
-    } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error('Isotope arrange error:', error);
-    }
-  }, [isotopeFilter, sortConfig, isIsotopeReady]);
-
-  const filteredItems = useMemo(
-    () =>
-      items.filter(item =>
-        matchesFilters({
-          item,
-          activeCategory,
-          activeTags: activeTagList,
-        })
-      ),
-    [items, activeCategory, activeTagList]
-  );
+    return filtered;
+  }, [items, activeCategory, activeTagList, sortConfig]);
 
   const toggleTag = (tagId: MenuDietaryFilter['id']) => {
     setActiveTags(previous => {
@@ -204,8 +131,8 @@ const MenuPage = ({
     setActiveSort(sortOptions[0]?.id ?? 'recommended');
   };
 
-  const resultLabel = `${filteredItems.length} ${
-    filteredItems.length === 1 ? 'dish' : 'dishes'
+  const resultLabel = `${displayedItems.length} ${
+    displayedItems.length === 1 ? 'dish' : 'dishes'
   }`;
 
   return (
@@ -332,12 +259,8 @@ const MenuPage = ({
             </div>
           </div>
 
-          <div
-            className={`menu-grid${isIsotopeReady ? ' is-loaded' : ''}`}
-            ref={gridRef}
-            aria-live="polite"
-          >
-            {items.map((item, index) => (
+          <div className="menu-grid" aria-live="polite">
+            {displayedItems.map((item, index) => (
               <ProductCard
                 key={item.id}
                 item={item}
@@ -351,29 +274,6 @@ const MenuPage = ({
       </div>
     </section>
   );
-};
-
-const createFilterFn = (
-  activeCategory: string,
-  activeTags: MenuDietaryFilter['id'][]
-) => {
-  return (element: Element) => {
-    const node = element as HTMLElement;
-    const category = node.getAttribute('data-category');
-    const tags = (node.getAttribute('data-tags') ?? '')
-      .split(',')
-      .filter(Boolean) as MenuDietaryFilter['id'][];
-
-    if (activeCategory !== 'all' && category !== activeCategory) {
-      return false;
-    }
-
-    if (activeTags.length === 0) {
-      return true;
-    }
-
-    return activeTags.every(tag => tags.includes(tag));
-  };
 };
 
 const matchesFilters = ({

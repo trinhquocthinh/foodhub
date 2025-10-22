@@ -268,16 +268,15 @@
   }
 
   .menu-grid {
-    opacity: 0;
-    transform: translateY(20px);
-    transition:
-      opacity 0.4s ease,
-      transform 0.4s ease;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 24px;
+    opacity: 1;
+    transition: opacity 0.3s ease;
+  }
 
-    &.is-loaded {
-      opacity: 1;
-      transform: translateY(0);
-    }
+  .menu-card {
+    width: 100%;
   }
 }
 
@@ -294,6 +293,11 @@
     .toolbar-left {
       flex-direction: row;
       align-items: center;
+    }
+
+    .menu-grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 32px;
     }
   }
 }
@@ -327,6 +331,14 @@
 
     .menu-toolbar {
       padding: 20px 28px;
+    }
+  }
+}
+
+@include desktop-up {
+  .menu-page {
+    .menu-grid {
+      grid-template-columns: repeat(3, 1fr);
     }
   }
 }
