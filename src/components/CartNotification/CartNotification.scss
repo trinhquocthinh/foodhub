@@ -1,0 +1,130 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+
+.cart-notification {
+  position: fixed;
+  top: 110px;
+  right: 24px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 20px;
+  border-radius: 20px;
+  background: $white;
+  box-shadow: 0 28px 64px hsla(229, 30%, 20%, 0.18);
+  z-index: 30;
+  transform: translateX(120%);
+  animation:
+    cart-toast-in 0.4s ease forwards,
+    cart-toast-out 0.32s ease forwards 2.9s;
+  pointer-events: auto;
+
+  &__media {
+    width: 56px;
+    height: 56px;
+    overflow: hidden;
+    border-radius: 16px;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  }
+
+  &__content {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 180px;
+  }
+
+  &__title {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: $saffron;
+    font-weight: 600;
+
+    svg {
+      width: 16px;
+      height: 16px;
+    }
+  }
+
+  &__body {
+    color: $space-cadet;
+    font-size: 15px;
+    font-weight: 500;
+    line-height: 1.4;
+
+    span {
+      margin-left: 6px;
+      font-weight: 600;
+      color: $rhythm;
+    }
+  }
+
+  &__close {
+    @include button-reset;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: $cultured;
+    color: $space-cadet;
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: 0.25s ease;
+
+    &:hover {
+      background: hsla(45, 91%, 58%, 0.28);
+    }
+
+    svg {
+      width: 18px;
+      height: 18px;
+    }
+  }
+}
+
+@keyframes cart-toast-in {
+  0% {
+    opacity: 0;
+    transform: translateX(120%) scale(0.98);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+@keyframes cart-toast-out {
+  0% {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translateX(120%) scale(0.98);
+  }
+}
+
+@include mobile-up {
+  .cart-notification {
+    right: 32px;
+  }
+}
+
+@include tablet-up {
+  .cart-notification {
+    top: 120px;
+    right: 40px;
+  }
+}

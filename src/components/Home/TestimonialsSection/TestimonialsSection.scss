@@ -2,7 +2,7 @@
 @use '../../../styles/mixins' as *;
 
 .testimonials {
-  padding: $py $px 120px;
+  padding: $py $px;
 
   &-grid {
     display: grid;
@@ -91,7 +91,7 @@
 @include laptop-up {
   .testimonials {
     max-width: 950px;
-    padding-bottom: 200px;
+    padding-bottom: 60px;
   }
 }
 

@@ -7,6 +7,7 @@ import {
   useMemo,
   useState,
 } from 'react';
+import { useRef } from 'react';
 import type { ReactNode } from 'react';
 
 import { cartItems as initialCartItems } from '@/constants/layout';
@@ -20,6 +21,16 @@ type CartContextValue = {
   incrementItem: (id: string) => void;
   decrementItem: (id: string) => void;
   removeItem: (id: string) => void;
+  notification: CartNotification | null;
+  clearNotification: () => void;
+};
+
+type CartNotification = {
+  id: number;
+  name: string;
+  image: string;
+  quantity: number;
+  seq?: number;
 };
 
 const CartContext = createContext<CartContextValue | undefined>(undefined);
@@ -28,15 +39,29 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   const [items, setItems] = useState<CartItem[]>(
     initialCartItems.map(item => ({ ...item, quantity: item.quantity ?? 1 }))
   );
+  const [notification, setNotification] = useState<CartNotification | null>(
+    null
+  );
+  const seqRef = useRef(0);
 
   const addToCart = useCallback((product: Product) => {
     setItems(previousItems => {
       const existingItem = previousItems.find(item => item.id === product.id);
 
       if (existingItem) {
+        const nextQuantity = existingItem.quantity + 1;
+        seqRef.current += 1;
+        setNotification({
+          id: Date.now(),
+          name: product.name,
+          image: product.image,
+          quantity: nextQuantity,
+          seq: seqRef.current,
+        });
+
         return previousItems.map(item => {
           if (item.id === product.id) {
-            return { ...item, quantity: item.quantity + 1 };
+            return { ...item, quantity: nextQuantity };
           }
 
           return item;
@@ -50,6 +75,15 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
         image: product.image,
         quantity: 1,
       };
+
+      seqRef.current += 1;
+      setNotification({
+        id: Date.now(),
+        name: product.name,
+        image: product.image,
+        quantity: 1,
+        seq: seqRef.current,
+      });
 
       return [...previousItems, newItem];
     });
@@ -92,6 +126,10 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     setItems(previousItems => previousItems.filter(item => item.id !== id));
   }, []);
 
+  const clearNotification = useCallback(() => {
+    setNotification(null);
+  }, []);
+
   const cartCount = useMemo(
     () => items.reduce((total, item) => total + item.quantity, 0),
     [items]
@@ -111,6 +149,8 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
       incrementItem,
       decrementItem,
       removeItem,
+      notification,
+      clearNotification,
     }),
     [
       items,
@@ -120,6 +160,8 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
       incrementItem,
       decrementItem,
       removeItem,
+      notification,
+      clearNotification,
     ]
   );
 

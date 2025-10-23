@@ -1,0 +1,176 @@
+@use '../../../styles/variables' as *;
+@use '../../../styles/mixins' as *;
+
+.contact {
+  padding: 60px 20px 120px;
+
+  &__inner {
+    max-width: 1120px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  &__header {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    text-align: left;
+
+    h2 {
+      font-size: 28px;
+      font-weight: 600;
+      color: $space-cadet;
+    }
+  }
+
+  &__lead {
+    max-width: 320px;
+    margin: 0 0 auto;
+    font-size: 15px;
+    line-height: 1.6;
+    color: $rhythm;
+  }
+
+  &__grid {
+    display: grid;
+    gap: 28px;
+  }
+
+  &__card {
+    background: $white;
+    padding: 32px 28px;
+    box-shadow: 0 24px 60px hsla(229, 29%, 18%, 0.1);
+
+    &--details {
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+    }
+  }
+
+  &__form {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+
+    label {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      font-size: 14px;
+      color: $space-cadet;
+
+      input,
+      textarea {
+        border: 1px solid hsla(229, 21%, 23%, 0.12);
+        padding: 14px 16px;
+        font-size: 15px;
+        background: hsla(0, 0%, 100%, 0.95);
+        transition: border-color 0.25s ease;
+
+        &:focus-visible {
+          border-color: $saffron;
+          outline: 2px solid hsla(45, 91%, 58%, 0.3);
+        }
+      }
+
+      textarea {
+        resize: vertical;
+        min-height: 140px;
+      }
+    }
+  }
+
+  &__submit {
+    align-self: flex-start;
+  }
+
+  &__details {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+
+  &__detail {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+
+    a {
+      color: $space-cadet;
+      font-weight: 600;
+      transition: $default-transition;
+
+      &:hover {
+        color: $saffron;
+      }
+    }
+  }
+
+  &__detail-label {
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    font-size: 12px;
+    color: $rhythm;
+    margin-bottom: 6px;
+  }
+
+  &__detail-value {
+    color: $space-cadet;
+    font-weight: 600;
+  }
+
+  &__icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    background: hsla(45, 91%, 58%, 0.24);
+    color: $space-cadet;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &__cta {
+    background: hsla(229, 21%, 23%, 0.04);
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+
+    p {
+      color: $rhythm;
+      line-height: 1.5;
+    }
+
+    .btn {
+      align-self: flex-start;
+    }
+  }
+}
+
+@include tablet-up {
+  .contact {
+    padding: 60px 30px 140px;
+
+    &__grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    &__submit {
+      margin-top: 10px;
+    }
+  }
+}
+
+@include laptop-up {
+  .contact {
+    padding-inline: 40px;
+
+    &__inner {
+      gap: 30px;
+    }
+  }
+}

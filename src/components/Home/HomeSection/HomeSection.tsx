@@ -17,7 +17,7 @@ const HomeSection = () => {
           believe every meal should tell a story.
         </p>
         <div className="btn-group">
-          <Link href="#menu" className="btn btn-primary btn-icon">
+          <Link href="/#menu" className="btn btn-primary btn-icon">
             <Image
               src={getImagePath('/images/menu.svg')}
               alt="Our menu"
@@ -26,7 +26,7 @@ const HomeSection = () => {
             />
             Our menu
           </Link>
-          <Link href="#about" className="btn btn-secondary btn-icon">
+          <Link href="/#about" className="btn btn-secondary btn-icon">
             <Image
               src={getImagePath('/images/arrow.svg')}
               alt="About us"

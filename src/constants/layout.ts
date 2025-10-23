@@ -1,12 +1,12 @@
 import type { NavLink, CartItem } from '@/types';
 
 export const navLinks: NavLink[] = [
-  { label: 'Home', href: '#home' },
-  { label: 'About', href: '#about' },
-  { label: 'Services', href: '#services' },
-  { label: 'Our Menu', href: '#menu' },
-  { label: 'Full Menu', href: '/menu' },
-  { label: 'Testimonials', href: '#testimonials' },
+  { label: 'Home', href: '/' },
+  { label: 'About', href: '/#about' },
+  { label: 'Services', href: '/#services' },
+  { label: 'Our Menu', href: '/#menu' },
+  { label: 'Testimonials', href: '/#testimonials' },
+  { label: 'Contact', href: '/#contact' },
 ];
 
 export const cartItems: CartItem[] = [

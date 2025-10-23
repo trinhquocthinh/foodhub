@@ -2,7 +2,9 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { memo, useCallback, useState } from 'react';
+import { IoClose } from 'react-icons/io5';
 
 import { navLinks } from '@/constants/layout';
 import { useCart } from '@/context/CartContext';
@@ -14,6 +16,8 @@ const Header = () => {
   const [isNavOpen, setIsNavOpen] = useState<boolean>(false);
   const [isCartOpen, setIsCartOpen] = useState<boolean>(false);
   const { items, cartCount, subtotal } = useCart();
+  const router = useRouter();
+  const isCartEmpty = items.length === 0;
 
   const toggleNav = useCallback(() => {
     setIsNavOpen(previous => {
@@ -29,6 +33,10 @@ const Header = () => {
     setIsNavOpen(false);
   }, []);
 
+  const closeCart = useCallback(() => {
+    setIsCartOpen(false);
+  }, []);
+
   const toggleCart = useCallback(() => {
     setIsCartOpen(previous => {
       const nextValue = !previous;
@@ -39,7 +47,24 @@ const Header = () => {
     });
   }, [isNavOpen]);
 
-  const isCartEmpty = items.length === 0;
+  const handleViewOrder = useCallback(() => {
+    if (isCartEmpty) {
+      return;
+    }
+
+    closeCart();
+    router.push('/order');
+  }, [isCartEmpty, closeCart, router]);
+
+  const handleCheckout = useCallback(() => {
+    if (isCartEmpty) {
+      return;
+    }
+
+    closeCart();
+    router.push('/checkout');
+  }, [isCartEmpty, closeCart, router]);
+
   const itemLabel = cartCount === 1 ? 'item' : 'items';
   const cartStatusLabel = isCartEmpty
     ? 'Add a few favorites to get started.'
@@ -121,8 +146,18 @@ const Header = () => {
       >
         <div className="cart-panel">
           <div className="cart-header">
-            <h4 className="cart-h4">Your order</h4>
-            <p className="cart-subtitle">{cartStatusLabel}</p>
+            <div className="cart-header__copy">
+              <h4 className="cart-h4">Your order</h4>
+              <p className="cart-subtitle">{cartStatusLabel}</p>
+            </div>
+            <button
+              type="button"
+              className="cart-close-btn"
+              onClick={closeCart}
+              aria-label="Close cart drawer"
+            >
+              <IoClose aria-hidden="true" />
+            </button>
           </div>
 
           <ul className="cart-box-ul">
@@ -177,6 +212,7 @@ const Header = () => {
             className="btn btn-secondary"
             disabled={isCartEmpty}
             aria-disabled={isCartEmpty}
+            onClick={handleViewOrder}
           >
             View order
           </button>
@@ -185,11 +221,20 @@ const Header = () => {
             className="btn btn-primary"
             disabled={isCartEmpty}
             aria-disabled={isCartEmpty}
+            onClick={handleCheckout}
           >
             Checkout
           </button>
         </div>
       </aside>
+      {isCartOpen ? (
+        <button
+          type="button"
+          className="cart-overlay"
+          onClick={closeCart}
+          aria-label="Close cart drawer"
+        />
+      ) : null}
     </header>
   );
 };
