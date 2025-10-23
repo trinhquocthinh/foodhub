@@ -19,6 +19,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 
+## [1.0.5] - 2025-10-23
+
+### Added
+
+- Order page and checkout page
+- Fullmenu page
+
+### Changed
+
+- Update card product and cart
+
 ## [1.0.4] - 2025-10-21
 
 ### Changed
