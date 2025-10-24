@@ -1,18 +1,21 @@
 'use client';
 
+import { zodResolver } from '@hookform/resolvers/zod';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import type { ChangeEvent, FormEvent } from 'react';
+import { useForm } from 'react-hook-form';
 import {
   IoArrowBack,
   IoCallOutline,
+  IoCheckmarkCircleOutline,
   IoDocumentTextOutline,
   IoLocationOutline,
   IoPersonOutline,
   IoTimeOutline,
 } from 'react-icons/io5';
+import { z } from 'zod';
 
 import { useCart } from '@/context/CartContext';
 import { getImagePath } from '@/lib/getImagePath';
@@ -21,17 +24,48 @@ import './CheckoutPage.scss';
 
 const SERVICE_FEE = 4.5;
 const TAX_RATE = 0.08;
+const PHONE_NUMBER_PATTERN = /^[+()\d\s-]{8,}$/;
+const NOTES_CHARACTER_LIMIT = 280;
 
-type CheckoutFormState = {
-  fullName: string;
-  email: string;
-  phone: string;
-  diningOption: 'dine-in' | 'takeaway';
-  arrivalTime: string;
-  notes: string;
-};
+const CHECKOUT_COPY = {
+  intro:
+    'Share your details and timing so we can have everything ready the moment you arrive.',
+  empty:
+    'Add a few dishes to your order before heading to checkout so we can prep everything with care.',
+  dineIn: 'We will have your table staged before you arrive.',
+  takeaway: 'We will package everything to travel beautifully.',
+  followUp:
+    'After submitting, a host will confirm your order details by phone or email within a few minutes.',
+} as const;
 
-const initialFormState: CheckoutFormState = {
+const checkoutSchema = z.object({
+  fullName: z.string().trim().min(2, 'Please share the name for the booking.'),
+  email: z
+    .string()
+    .trim()
+    .email('Add a valid email so we can send confirmations.'),
+  phone: z
+    .string()
+    .trim()
+    .min(8, 'Phone number should include your area code.')
+    .regex(
+      PHONE_NUMBER_PATTERN,
+      'Use digits, spaces, parentheses, plus or hyphen only.'
+    ),
+  diningOption: z.enum(['dine-in', 'takeaway']),
+  arrivalTime: z
+    .string()
+    .trim()
+    .regex(/^[0-2]\d:[0-5]\d$/, 'Choose an arrival time.'),
+  notes: z
+    .string()
+    .trim()
+    .max(NOTES_CHARACTER_LIMIT, 'Keep notes under 280 characters.'),
+});
+
+type CheckoutFormData = z.infer<typeof checkoutSchema>;
+
+const defaultValues: CheckoutFormData = {
   fullName: '',
   email: '',
   phone: '',
@@ -40,11 +74,52 @@ const initialFormState: CheckoutFormState = {
   notes: '',
 };
 
+const LoadingCheckoutState = () => (
+  <section className="checkout-page">
+    <div className="checkout-page__hero">
+      <h1>Loading checkout...</h1>
+    </div>
+  </section>
+);
+
+const EmptyCheckoutState = ({ message }: { message: string }) => (
+  <section className="checkout-page checkout-page--empty">
+    <div className="checkout-page__hero">
+      <h1>Your table is waiting</h1>
+      <p>{message}</p>
+      <Link href="/menu" className="btn btn-primary btn-icon">
+        Browse the menu
+      </Link>
+    </div>
+  </section>
+);
+
+const CheckoutSuccessNotice = () => (
+  <div className="checkout-form__notice" role="status" aria-live="polite">
+    <IoCheckmarkCircleOutline aria-hidden="true" />
+    <div>
+      <strong>Request sent</strong>
+      <p>Our host will reach out shortly to confirm your booking.</p>
+    </div>
+  </div>
+);
+
 const CheckoutPage = () => {
   const { items, subtotal, isHydrated } = useCart();
   const router = useRouter();
-  const [formState, setFormState] =
-    useState<CheckoutFormState>(initialFormState);
+  const [showSuccess, setShowSuccess] = useState(false);
+
+  const {
+    register,
+    handleSubmit,
+    reset,
+    watch,
+    formState: { errors, isSubmitting, isSubmitSuccessful },
+  } = useForm<CheckoutFormData>({
+    resolver: zodResolver(checkoutSchema),
+    defaultValues,
+    mode: 'onBlur',
+  });
 
   const isEmpty = items.length === 0;
 
@@ -53,56 +128,60 @@ const CheckoutPage = () => {
       router.push('/menu');
     }
   }, [isHydrated, isEmpty, router]);
-  const serviceFee = isEmpty ? 0 : SERVICE_FEE;
-  const tax = isEmpty ? 0 : subtotal * TAX_RATE;
-  const total = subtotal + serviceFee + tax;
 
-  const checkoutIntro =
-    'Share your details and timing so we can have everything ready the moment you arrive.';
-  const emptyCopy =
-    'Add a few dishes to your order before heading to checkout so we can prep everything with care.';
-  const dineInCopy = 'We will have your table staged before you arrive.';
-  const takeawayCopy = 'We will package everything to travel beautifully.';
-  const followUpCopy =
-    'After submitting, a host will confirm your order details by phone or email within a few minutes.';
+  useEffect(() => {
+    if (!isSubmitSuccessful) {
+      return;
+    }
 
-  const handleChange = (
-    event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    const { name, value } = event.target;
-    setFormState(previous => ({ ...previous, [name]: value }));
+    setShowSuccess(true);
+    const timer = window.setTimeout(() => setShowSuccess(false), 6000);
+    return () => window.clearTimeout(timer);
+  }, [isSubmitSuccessful]);
+
+  useEffect(() => {
+    if (isSubmitting) {
+      setShowSuccess(false);
+    }
+  }, [isSubmitting]);
+
+  const onSubmit = async (_data: CheckoutFormData) => {
+    await new Promise(resolve => setTimeout(resolve, 600));
+    reset(defaultValues);
   };
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    // This demo form simply resets after submit to keep the flow playful.
-    setFormState(initialFormState);
-  };
-
-  // Show loading state during hydration to prevent flash of empty state
   if (!isHydrated) {
-    return (
-      <section className="checkout-page">
-        <div className="checkout-page__hero">
-          <h1>Loading checkout...</h1>
-        </div>
-      </section>
-    );
+    return <LoadingCheckoutState />;
   }
 
   if (isEmpty) {
-    return (
-      <section className="checkout-page checkout-page--empty">
-        <div className="checkout-page__hero">
-          <h1>Your table is waiting</h1>
-          <p>{emptyCopy}</p>
-          <Link href="/menu" className="btn btn-primary btn-icon">
-            Browse the menu
-          </Link>
-        </div>
-      </section>
-    );
+    return <EmptyCheckoutState message={CHECKOUT_COPY.empty} />;
   }
+
+  const { intro, dineIn, takeaway, followUp } = CHECKOUT_COPY;
+  const notesValue = watch('notes');
+  const diningOption = watch('diningOption');
+  const remainingCharacters = NOTES_CHARACTER_LIMIT - (notesValue?.length ?? 0);
+  const fullNameError = errors.fullName?.message;
+  const emailError = errors.email?.message;
+  const phoneError = errors.phone?.message;
+  const arrivalTimeError = errors.arrivalTime?.message;
+  const notesError = errors.notes?.message;
+
+  const fieldClassName = (hasError?: unknown) =>
+    hasError ? 'checkout-form__field is-invalid' : 'checkout-form__field';
+
+  const notesHelperId = 'checkout-notes-helper';
+  const notesErrorId = 'checkout-notes-error';
+  const notesDescribedBy = notesError
+    ? `${notesHelperId} ${notesErrorId}`
+    : notesHelperId;
+
+  const isDineIn = diningOption === 'dine-in';
+  const isTakeaway = diningOption === 'takeaway';
+  const serviceFee = SERVICE_FEE;
+  const tax = subtotal * TAX_RATE;
+  const total = subtotal + serviceFee + tax;
 
   return (
     <section className="checkout-page" aria-labelledby="checkout-heading">
@@ -117,55 +196,77 @@ const CheckoutPage = () => {
         </Link>
         <div>
           <h1 id="checkout-heading">Checkout</h1>
-          <p>{checkoutIntro}</p>
+          <p>{intro}</p>
         </div>
       </header>
 
       <div className="checkout-page__layout">
-        <form className="checkout-form" onSubmit={handleSubmit}>
+        <form
+          className="checkout-form"
+          onSubmit={handleSubmit(onSubmit)}
+          noValidate
+        >
+          {showSuccess && <CheckoutSuccessNotice />}
+
           <fieldset>
             <legend>
               <IoPersonOutline aria-hidden="true" /> Contact details
             </legend>
 
-            <label htmlFor="fullName">
-              Full name
+            <div className={fieldClassName(fullNameError)}>
+              <label htmlFor="fullName">Full name</label>
               <input
                 id="fullName"
-                name="fullName"
                 type="text"
+                autoComplete="name"
                 placeholder="Anna Portfolio"
-                required
-                value={formState.fullName}
-                onChange={handleChange}
+                aria-invalid={fullNameError ? 'true' : 'false'}
+                aria-describedby={fullNameError ? 'fullName-error' : undefined}
+                {...register('fullName')}
               />
-            </label>
+              {fullNameError && (
+                <p id="fullName-error" className="checkout-form__error">
+                  {fullNameError}
+                </p>
+              )}
+            </div>
 
-            <label htmlFor="email">
-              Email address
+            <div className={fieldClassName(emailError)}>
+              <label htmlFor="email">Email address</label>
               <input
                 id="email"
-                name="email"
                 type="email"
+                autoComplete="email"
                 placeholder="anna@example.com"
-                required
-                value={formState.email}
-                onChange={handleChange}
+                aria-invalid={emailError ? 'true' : 'false'}
+                aria-describedby={emailError ? 'email-error' : undefined}
+                {...register('email')}
               />
-            </label>
+              {emailError && (
+                <p id="email-error" className="checkout-form__error">
+                  {emailError}
+                </p>
+              )}
+            </div>
 
-            <label htmlFor="phone">
-              Phone number
+            <div className={fieldClassName(phoneError)}>
+              <label htmlFor="phone">Phone number</label>
               <input
                 id="phone"
-                name="phone"
                 type="tel"
+                autoComplete="tel"
+                inputMode="tel"
                 placeholder="(+84) 123 456 789"
-                required
-                value={formState.phone}
-                onChange={handleChange}
+                aria-invalid={phoneError ? 'true' : 'false'}
+                aria-describedby={phoneError ? 'phone-error' : undefined}
+                {...register('phone')}
               />
-            </label>
+              {phoneError && (
+                <p id="phone-error" className="checkout-form__error">
+                  {phoneError}
+                </p>
+              )}
+            </div>
           </fieldset>
 
           <fieldset>
@@ -174,45 +275,53 @@ const CheckoutPage = () => {
             </legend>
 
             <div className="checkout-form__options" role="radiogroup">
-              <label className="option">
+              <label className={`option${isDineIn ? ' option--active' : ''}`}>
                 <input
                   type="radio"
-                  name="diningOption"
                   value="dine-in"
-                  checked={formState.diningOption === 'dine-in'}
-                  onChange={handleChange}
+                  aria-checked={isDineIn}
+                  {...register('diningOption')}
                 />
                 <span>
                   Dine in
-                  <small>{dineInCopy}</small>
+                  <small>{dineIn}</small>
                 </span>
               </label>
 
-              <label className="option">
+              <label className={`option${isTakeaway ? ' option--active' : ''}`}>
                 <input
                   type="radio"
-                  name="diningOption"
                   value="takeaway"
-                  checked={formState.diningOption === 'takeaway'}
-                  onChange={handleChange}
+                  aria-checked={isTakeaway}
+                  {...register('diningOption')}
                 />
                 <span>
                   Takeaway
-                  <small>{takeawayCopy}</small>
+                  <small>{takeaway}</small>
                 </span>
               </label>
             </div>
 
-            <label htmlFor="arrivalTime">
-              <IoTimeOutline aria-hidden="true" /> Desired arrival time
+            <div className={fieldClassName(arrivalTimeError)}>
+              <label htmlFor="arrivalTime">
+                <IoTimeOutline aria-hidden="true" /> Desired arrival time
+              </label>
               <input
                 id="arrivalTime"
-                name="arrivalTime"
                 type="time"
-                value={formState.arrivalTime}
-                onChange={handleChange}
+                step={900}
+                aria-invalid={arrivalTimeError ? 'true' : 'false'}
+                aria-describedby={
+                  arrivalTimeError ? 'arrivalTime-error' : undefined
+                }
+                {...register('arrivalTime')}
               />
-            </label>
+              {arrivalTimeError && (
+                <p id="arrivalTime-error" className="checkout-form__error">
+                  {arrivalTimeError}
+                </p>
+              )}
+            </div>
           </fieldset>
 
           <fieldset>
@@ -220,21 +329,44 @@ const CheckoutPage = () => {
               <IoDocumentTextOutline aria-hidden="true" /> Special notes
             </legend>
 
-            <textarea
-              id="notes"
-              name="notes"
-              rows={4}
-              placeholder="Allergies, celebrations, seating preferences..."
-              value={formState.notes}
-              onChange={handleChange}
-            />
+            <div className={fieldClassName(notesError)}>
+              <label htmlFor="notes">Add a note (optional)</label>
+              <textarea
+                id="notes"
+                rows={4}
+                placeholder="Allergies, celebrations, seating preferences..."
+                aria-invalid={notesError ? 'true' : 'false'}
+                aria-describedby={notesDescribedBy}
+                {...register('notes')}
+              />
+              <div
+                className="checkout-form__meta"
+                id={notesHelperId}
+                aria-live="polite"
+              >
+                <span className="checkout-form__helper">
+                  {remainingCharacters} characters left
+                </span>
+              </div>
+              {notesError && (
+                <p
+                  id={notesErrorId}
+                  className="checkout-form__error"
+                  role="alert"
+                >
+                  {notesError}
+                </p>
+              )}
+            </div>
           </fieldset>
 
           <button
             type="submit"
             className="btn btn-primary btn-icon checkout-form__submit"
+            disabled={isSubmitting}
           >
-            <IoCallOutline aria-hidden="true" /> Place order request
+            <IoCallOutline aria-hidden="true" />
+            {isSubmitting ? 'Sending details...' : 'Place order request'}
           </button>
         </form>
 
@@ -285,7 +417,7 @@ const CheckoutPage = () => {
             </div>
           </dl>
 
-          <p className="checkout-summary__note">{followUpCopy}</p>
+          <p className="checkout-summary__note">{followUp}</p>
         </aside>
       </div>
     </section>

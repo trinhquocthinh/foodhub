@@ -65,12 +65,41 @@
 
 .checkout-form {
   background: $white;
-  border-radius: 28px;
   padding: 32px 28px;
   box-shadow: 0 24px 58px hsla(229, 31%, 18%, 0.12);
   display: flex;
   flex-direction: column;
   gap: 28px;
+
+  &__notice {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 18px 20px;
+    border-radius: 20px;
+    border: 1px solid hsla(88, 50%, 60%, 0.35);
+    background: hsla(88, 50%, 60%, 0.12);
+
+    svg {
+      width: 24px;
+      height: 24px;
+      color: $pistachio;
+      flex-shrink: 0;
+    }
+
+    strong {
+      display: block;
+      font-weight: 600;
+      color: $space-cadet;
+    }
+
+    p {
+      margin-top: 4px;
+      font-size: 13px;
+      color: $rhythm;
+      line-height: 1.5;
+    }
+  }
 
   fieldset {
     border: none;
@@ -89,6 +118,7 @@
       text-transform: uppercase;
       letter-spacing: 0.08em;
       font-size: 12px;
+      padding-bottom: 20px;
 
       svg {
         width: 18px;
@@ -98,21 +128,30 @@
     }
   }
 
-  label {
+  &__field {
     display: flex;
     flex-direction: column;
     gap: 8px;
-    font-size: 14px;
-    color: $space-cadet;
+
+    label {
+      font-size: 14px;
+      font-weight: 500;
+      color: $space-cadet;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
 
     input,
     textarea {
       width: 100%;
-      border-radius: 16px;
       border: 1px solid hsla(229, 21%, 23%, 0.12);
       padding: 14px 16px;
       font-size: 15px;
-      transition: border-color 0.25s ease;
+      transition:
+        border-color 0.25s ease,
+        box-shadow 0.25s ease;
+      background: $white;
 
       &:focus-visible {
         border-color: $saffron;
@@ -126,6 +165,30 @@
     }
   }
 
+  &__field.is-invalid {
+    input,
+    textarea {
+      border-color: $red-orange-crayola;
+      box-shadow: 0 0 0 3px hsla(0, 100%, 66%, 0.16);
+    }
+  }
+
+  &__error {
+    font-size: 13px;
+    color: $red-orange-crayola;
+  }
+
+  &__meta {
+    display: flex;
+    justify-content: flex-end;
+    font-size: 12px;
+    color: $rhythm;
+  }
+
+  &__helper {
+    font-size: 12px;
+  }
+
   &__options {
     display: grid;
     gap: 16px;
@@ -135,13 +198,15 @@
       align-items: flex-start;
       gap: 12px;
       padding: 16px 18px;
-      border-radius: 20px;
       background: $cultured;
+      border: 1px solid transparent;
       transition: $default-transition;
       cursor: pointer;
 
       input {
         margin-top: 4px;
+        accent-color: $saffron;
+        width: fit-content;
       }
 
       span {
@@ -159,18 +224,32 @@
       &:hover {
         background: hsla(45, 91%, 58%, 0.2);
       }
+
+      &:focus-within {
+        outline: 2px solid hsla(45, 91%, 58%, 0.35);
+        outline-offset: 2px;
+      }
+
+      &.option--active {
+        background: hsla(45, 91%, 58%, 0.22);
+        border-color: hsla(45, 91%, 58%, 0.55);
+      }
     }
   }
 
   &__submit {
     align-self: flex-start;
     gap: 10px;
+
+    &:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+    }
   }
 }
 
 .checkout-summary {
   background: $white;
-  border-radius: 28px;
   padding: 32px 28px;
   box-shadow: 0 24px 58px hsla(229, 31%, 18%, 0.08);
   display: flex;
