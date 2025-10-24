@@ -4,19 +4,22 @@ import {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
+  useRef,
   useState,
 } from 'react';
-import { useRef } from 'react';
 import type { ReactNode } from 'react';
 
-import { cartItems as initialCartItems } from '@/constants/layout';
 import type { CartItem, Product } from '@/types';
+
+const CART_STORAGE_KEY = 'foodhub-cart-items';
 
 type CartContextValue = {
   items: CartItem[];
   cartCount: number;
   subtotal: number;
+  isHydrated: boolean;
   addToCart: (product: Product) => void;
   incrementItem: (id: string) => void;
   decrementItem: (id: string) => void;
@@ -35,14 +38,57 @@ type CartNotification = {
 
 const CartContext = createContext<CartContextValue | undefined>(undefined);
 
+const loadCartFromStorage = (): CartItem[] => {
+  // Always return empty array during SSR to prevent hydration mismatches
+  if (typeof window === 'undefined') {
+    return [];
+  }
+
+  try {
+    const stored = localStorage.getItem(CART_STORAGE_KEY);
+    if (stored) {
+      const parsed = JSON.parse(stored) as CartItem[];
+      return Array.isArray(parsed) ? parsed : [];
+    }
+  } catch {
+    // localStorage errors ignored; fall back to empty cart
+  }
+
+  return [];
+};
+
+const saveCartToStorage = (items: CartItem[]) => {
+  if (typeof window === 'undefined') {
+    return;
+  }
+
+  try {
+    localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(items));
+  } catch {
+    // localStorage errors ignored
+  }
+};
+
 export const CartProvider = ({ children }: { children: ReactNode }) => {
-  const [items, setItems] = useState<CartItem[]>(
-    initialCartItems.map(item => ({ ...item, quantity: item.quantity ?? 1 }))
-  );
+  const [items, setItems] = useState<CartItem[]>([]);
   const [notification, setNotification] = useState<CartNotification | null>(
     null
   );
   const seqRef = useRef(0);
+  const [isHydrated, setIsHydrated] = useState(false);
+
+  // Load cart from localStorage after initial mount to prevent hydration mismatch
+  useEffect(() => {
+    setItems(loadCartFromStorage());
+    setIsHydrated(true);
+  }, []);
+
+  // Save cart to localStorage whenever items change (after hydration)
+  useEffect(() => {
+    if (isHydrated) {
+      saveCartToStorage(items);
+    }
+  }, [items, isHydrated]);
 
   const addToCart = useCallback((product: Product) => {
     setItems(previousItems => {
@@ -145,6 +191,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
       items,
       cartCount,
       subtotal,
+      isHydrated,
       addToCart,
       incrementItem,
       decrementItem,
@@ -156,6 +203,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
       items,
       cartCount,
       subtotal,
+      isHydrated,
       addToCart,
       incrementItem,
       decrementItem,

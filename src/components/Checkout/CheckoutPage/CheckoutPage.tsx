@@ -2,7 +2,8 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import type { ChangeEvent, FormEvent } from 'react';
 import {
   IoArrowBack,
@@ -40,11 +41,18 @@ const initialFormState: CheckoutFormState = {
 };
 
 const CheckoutPage = () => {
-  const { items, subtotal } = useCart();
+  const { items, subtotal, isHydrated } = useCart();
+  const router = useRouter();
   const [formState, setFormState] =
     useState<CheckoutFormState>(initialFormState);
 
   const isEmpty = items.length === 0;
+
+  useEffect(() => {
+    if (isHydrated && isEmpty) {
+      router.push('/menu');
+    }
+  }, [isHydrated, isEmpty, router]);
   const serviceFee = isEmpty ? 0 : SERVICE_FEE;
   const tax = isEmpty ? 0 : subtotal * TAX_RATE;
   const total = subtotal + serviceFee + tax;
@@ -70,6 +78,17 @@ const CheckoutPage = () => {
     // This demo form simply resets after submit to keep the flow playful.
     setFormState(initialFormState);
   };
+
+  // Show loading state during hydration to prevent flash of empty state
+  if (!isHydrated) {
+    return (
+      <section className="checkout-page">
+        <div className="checkout-page__hero">
+          <h1>Loading checkout...</h1>
+        </div>
+      </section>
+    );
+  }
 
   if (isEmpty) {
     return (

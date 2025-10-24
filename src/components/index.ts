@@ -11,3 +11,7 @@ export { default as CheckoutPage } from './Checkout/CheckoutPage';
 
 export { default as ProductCard } from './Menu/ProductCard/ProductCard';
 export { default as ProductRating } from './Menu/ProductRating/ProductRating';
+
+// Order components
+export { default as OrderSummary } from './Order/OrderSummary';
+export { default as OrderCard } from './Order/OrderCard';

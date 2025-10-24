@@ -1,0 +1,153 @@
+@use '../../../styles/variables' as *;
+@use '../../../styles/mixins' as *;
+
+.order-card {
+  display: grid;
+  grid-template-columns: 165px 1fr;
+  gap: 20px;
+  background: $white;
+  box-shadow: 0 22px 54px hsla(229, 31%, 18%, 0.08);
+  align-items: center;
+
+  @include laptop-up {
+    grid-template-columns: 120px 1fr;
+  }
+
+  &__media {
+    width: 165px;
+    height: 165px;
+    overflow: hidden;
+
+    @include laptop-up {
+      width: 120px;
+      height: 120px;
+    }
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  }
+
+  &__content {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    padding-inline-end: 20px;
+
+    @include laptop-up {
+      flex-direction: row;
+    }
+  }
+
+  h2 {
+    font-size: 18px;
+    font-weight: 600;
+    color: $space-cadet;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 150px;
+    text-align: center;
+
+    @include laptop-up {
+      text-align: left;
+    }
+  }
+
+  &__total {
+    font-weight: 600;
+    color: $space-cadet;
+    display: inline-flex;
+    align-items: baseline;
+    gap: 4px;
+    padding-block: 12px;
+
+    @include laptop-up {
+      padding-block: 0;
+      order: 3;
+    }
+
+    .currency {
+      font-size: 12px;
+      letter-spacing: 0.08em;
+    }
+  }
+
+  &__actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    order: 3;
+
+    @include laptop-up {
+      order: 2;
+    }
+  }
+
+  &__quantity {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px;
+
+    button {
+      @include button-reset;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: $saffron;
+      color: $space-cadet;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: $default-transition;
+
+      &:hover {
+        filter: saturate(1.05) brightness(1.05);
+      }
+
+      svg {
+        width: 13px;
+        height: 13px;
+      }
+    }
+
+    span {
+      min-width: 32px;
+      text-align: center;
+      font-weight: 600;
+      color: $space-cadet;
+      font-size: 16px;
+    }
+  }
+
+  &__remove {
+    @include button-reset;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: hsla(0, 0%, 96%, 1);
+    color: $rhythm;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: $default-transition;
+
+    &:hover {
+      color: $red-orange-crayola;
+      background: hsla(0, 100%, 66%, 0.16);
+    }
+
+    svg {
+      width: 18px;
+      height: 18px;
+    }
+  }
+}
