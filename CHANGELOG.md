@@ -19,6 +19,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 
+## [1.0.7] - 2025-10-24
+
+### Fixed
+
+- Config netlify deploy
+
 ## [1.0.6] - 2025-10-24
 
 ### Changed
