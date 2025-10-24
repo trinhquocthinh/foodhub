@@ -4,7 +4,7 @@ import type { ImageLoaderProps } from 'next/image';
  * Custom image loader for static exports with GitHub Pages support.
  *
  * This loader adds the base path to image URLs for GitHub Pages deployments.
- * The basePath is determined at build time from NODE_ENV.
+ * The basePath is determined at build time from NEXT_PUBLIC_BASE_PATH environment variable.
  */
 
 const imageLoader = ({ src }: ImageLoaderProps): string => {
@@ -13,9 +13,10 @@ const imageLoader = ({ src }: ImageLoaderProps): string => {
     return src;
   }
 
-  // For GitHub Pages production builds, always use /foodhub as base path
-  // For development, use empty string
-  const basePath = process.env.NODE_ENV === 'production' ? '/foodhub' : '';
+  // Use environment variable for base path (set at build time)
+  // For Netlify: NEXT_PUBLIC_BASE_PATH will be empty or '/'
+  // For GitHub Pages: NEXT_PUBLIC_BASE_PATH will be '/foodhub'
+  const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
 
   // Ensure we don't double-add slashes
   const cleanSrc = src.startsWith('/') ? src : `/${src}`;

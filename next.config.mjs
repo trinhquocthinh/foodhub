@@ -7,9 +7,14 @@ const bundleAnalyzer = withBundleAnalyzer({
 const repoName = process.env.GITHUB_REPOSITORY?.split('/')[1] || 'foodhub';
 const isDeploy = process.env.NODE_ENV === 'production';
 
-// For GitHub Pages, always use the repo name as base path in production
+// Detect deployment platform
+// NETLIFY is set to 'true' on Netlify
+// For Netlify, use no base path (root deployment)
+// For GitHub Pages, use repo name as base path
+const isNetlify = process.env.NETLIFY === 'true';
 const publicBasePath =
-  process.env.NEXT_PUBLIC_BASE_PATH || (isDeploy ? `/${repoName}` : '');
+  process.env.NEXT_PUBLIC_BASE_PATH ||
+  (isDeploy && !isNetlify ? `/${repoName}` : '');
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {

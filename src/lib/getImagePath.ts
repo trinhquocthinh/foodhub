@@ -9,11 +9,13 @@ export const getImagePath = (src: string): string => {
     return src;
   }
 
-  // In production (GitHub Pages), add the base path
-  const basePath = process.env.NODE_ENV === 'production' ? '/foodhub' : '';
+  // Use environment variable for base path (set at build time)
+  // For Netlify: NEXT_PUBLIC_BASE_PATH will be empty or '/'
+  // For GitHub Pages: NEXT_PUBLIC_BASE_PATH will be '/foodhub'
+  const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
 
   // Ensure the src starts with a slash
   const cleanSrc = src.startsWith('/') ? src : `/${src}`;
 
-  return `${basePath}${cleanSrc}`;
+  return basePath ? `${basePath}${cleanSrc}` : cleanSrc;
 };
